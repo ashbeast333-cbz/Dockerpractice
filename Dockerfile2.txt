@@ -1,0 +1,23 @@
+# Use official Ubuntu base image
+FROM ubuntu:20.04
+
+# Prevent interactive prompts during package install
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Apache and clean up apt cache
+RUN apt-get update && \
+    apt-get install -y apache2 unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Remove default index.html (optional)
+RUN rm -f /var/www/html/index.html
+
+# Copy your custom website files into Apache’s web root
+# (replace 'site/' with your actual folder containing index.html etc.)
+COPY site/ /var/www/html/
+
+# Expose port 80 for HTTP traffic
+EXPOSE 80
+
+# Start Apache in foreground (important for Docker)
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
